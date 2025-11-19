@@ -11,4 +11,8 @@ public class UsuarioComum {
     public UsuarioComum(String nome) {
     	this.nome = nome;
     }
+    public UsuarioComum(String cpf) {
+    	this.cpf = cpf;
+    }
+
 }
