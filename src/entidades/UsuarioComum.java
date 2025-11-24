@@ -2,7 +2,7 @@ package entidades;
 
 
 public class UsuarioComum {
-    package String nome, cpf, email, senha, telefone;
+     String nome, cpf, email, senha, telefone;
 
     public UsuarioComum(String nome, String cpf, String email, String senha, String telefone) {
         this.nome = nome;

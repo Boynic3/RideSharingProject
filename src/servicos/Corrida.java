@@ -26,13 +26,13 @@ public class Corrida {
         return preco;
     }
 
-    public inicializarViagem(){
-
+    public void inicializarViagem(){
+        System.out.println("Viagem iniciada!");
     }
-    public finalizarViagem(){
-
+    public void finalizarViagem(){
+        System.out.println("Viagem finalizada!");
     }
-    public cancelarViagem(){
-
+    public void cancelarViagem(){
+        System.out.println("Viagem cancelada!");
     }
 }
