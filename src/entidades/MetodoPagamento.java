@@ -1,9 +1,9 @@
 package entidades;
 
-public interface MetodoPagamento {
-    package double saldo;
+public class MetodoPagamento {
+    double saldo;
 
-    public processarPagamento() {
+    public void processarPagamento() {
 
     }
 }
