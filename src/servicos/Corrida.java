@@ -19,9 +19,13 @@ public class Corrida {
     public String getLocalFinal() {
         return localFinal;
     }
+    
+    public double getPreco() {
+    	return this.preco;
+    }
 
 
-    public double corridaPreço(double preco) {
+    public double corridaPreco(double preco) {
         this.preco = preco;
         return preco;
     }

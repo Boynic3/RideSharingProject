@@ -1,12 +1,12 @@
 package exceptions;
 
-public class SaldoInsuficienteException extends Exception {
+public class PagamentoRecusadoException extends Exception {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public SaldoInsuficienteException(String mensagem) {
+	public PagamentoRecusadoException(String mensagem) {
 		super(mensagem);
 	}
 
