@@ -1,8 +1,13 @@
 package entidades;
 
-public class CartaoCredito extends MetodoPagamento {
+public class CartaoCredito implements MetodoPagamento {
 
-    public processarPagamentos(){
-
+    public boolean processarPagamento(double valor){
+    	System.out.println("Processando pagamento R$" + valor + " no Crédito...");
+    	return true;
+    	}
+    
+    public String getMetodo() {
+    	return "Cartão de Crédito";
     }
 }

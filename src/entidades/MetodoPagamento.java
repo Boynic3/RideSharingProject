@@ -1,9 +1,9 @@
 package entidades;
 
-public class MetodoPagamento {
-    double saldo;
-
-    public void processarPagamento() {
+public interface MetodoPagamento {
+    boolean processarPagamento(double valor);
+    String getMetodo();
+    
 
     }
-}
+

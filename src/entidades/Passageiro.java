@@ -9,4 +9,12 @@ public class Passageiro extends UsuarioComum {
 
     }
 
+	public boolean isSaldoPendente() {
+		return saldoPendente;
+	}
+
+	public void setSaldoPendente(boolean saldoPendente) {
+		this.saldoPendente = saldoPendente;
+	}
+
 }
