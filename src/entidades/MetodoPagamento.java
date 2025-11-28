@@ -1,8 +1,8 @@
 package entidades;
 
 public interface MetodoPagamento {
-    boolean processarPagamento(double valor);
-    String getMetodo();
+    public boolean processarPagamento(double valor);
+    public String getMetodo();
     
 
     }
