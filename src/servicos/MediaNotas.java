@@ -21,6 +21,5 @@ public class MediaNotas {
 	}
 	
 		public void setNotas(Avaliacao notas[]) {
-		Notas = notas;
-	}
+		Notas = notas;}
 }
