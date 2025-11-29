@@ -3,8 +3,7 @@ package servicos;
 import entidades.MetodoPagamento;
 import entidades.Passageiro;
 import exceptions.EstadoInvalidoDaCorridaException;
-import exceptions.PagamentoRecusadoException;
-import exceptions.PassageiroPendenteException;
+
 
 public class Corrida {
     private String localPartida, localFinal;
@@ -35,24 +34,18 @@ public class Corrida {
         return preco;
     }
 
-    public void inicializarViagem() throws PassageiroPendenteException {
-        if (this.passageiro == null) {
-            throw new PassageiroPendenteException("Erro ao iniciar viagem! Passageiro pendente");
-        }
+    public void inicializarViagem() {
         System.out.println("Viagem iniciada!");
         viagemIniciada = true;
     }
 
-    public void finalizarViagem(boolean b) throws PagamentoRecusadoException {
-        if (b == false) {
-            throw new PagamentoRecusadoException("Erro ao finalizar viagem! Método de pagamento invalido");
-        }
+    public void finalizarViagem(boolean b) {
         System.out.println("Viagem finalizada!");
     }
 
     public void cancelarViagem(boolean viagemIniciada) throws EstadoInvalidoDaCorridaException {
         if (viagemIniciada == false) {
-            throw new EstadoInvalidoDaCorridaException("Erro ao cancelar viagem! Estado da viagem invalido");
+            throw new EstadoInvalidoDaCorridaException("Erro ao cancelar viagem! Corrida não iniciada.");
         }
         System.out.println("Erro ao cancelar viagem!");
     }
