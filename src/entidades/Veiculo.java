@@ -4,6 +4,26 @@ public class Veiculo {
     String modelo, cor, placa;
     int anoFabrica, anoModelo;
 
+    public String getModelo() {
+        return modelo;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public int getAnoFabrica() {
+        return anoFabrica;
+    }
+
+    public int getAnoModelo() {
+        return anoModelo;
+    }
+
     public void setModelo(String modelo) {
         this.modelo = modelo;
     }
@@ -23,4 +43,5 @@ public class Veiculo {
     public void setAnoModelo(int anoModelo) {
         this.anoModelo = anoModelo;
     }
+
 }

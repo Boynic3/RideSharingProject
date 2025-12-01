@@ -17,4 +17,7 @@ public class Passageiro extends UsuarioComum {
 		this.saldoPendente = saldoPendente;
 	}
 
+    public MetodoPagamento getPagamento() {
+        return tipoPagamento;
+    }
 }

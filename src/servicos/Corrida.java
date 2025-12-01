@@ -8,7 +8,7 @@ import exceptions.EstadoInvalidoDaCorridaException;
 public class Corrida {
     private String localPartida, localFinal;
     private double preco;
-    private boolean viagemIniciada;
+    private boolean viagemIniciada = false;
     Passageiro passageiro;
     boolean b = MetodoPagamento.validaPagamento(passageiro);
 
