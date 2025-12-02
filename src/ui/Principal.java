@@ -316,7 +316,7 @@ public class Principal {
     }
 
 
-    private static void finalizarViagem() {
+    private static void finalizarViagem() {              //Arruma esse metodo
         Corrida c = selecionarViagem();
         if(c != null && c.isViagemIniciada() == true){
             c.finalizarViagem();
@@ -345,20 +345,20 @@ public class Principal {
         return Principal.corridas.get(Integer.parseInt(Principal.ler.nextLine()));
     }
 
-    private static void cancelarViagem() {
+    private static void cancelarViagem() {        //Mesma coisa com esse aqui, ajeitar como expliquei
         Corrida c = selecionarViagem();
         if(c.isViagemIniciada() == true){
             c.finalizarViagem();
         }
     }
 
-    private static void processarPagamento() {
-
+    private static void processarPagamento() {    //Implementa isso pra depois que a corrida seja finalizada,
+                                                  //esse metodo seja chamado e pague a corrida
         System.out.println("Pagamento processado");
     }
 
-    private static void verCorridas() {
-        System.out.println("Corridas: ");
+    private static void verCorridas() {           //Ajeita o verCorridas depois de dar um jeito
+        System.out.println("Corridas: ");         //de fazer a corrida ser iniciada e virar um objeto
         for (Corrida c : Principal.corridas) {
             System.out.println("-------------------------");
 
@@ -433,7 +433,7 @@ public class Principal {
     }
 
     private static void testeInicializarDados() {
-        // n esquecam de adcionar o passageiro/motorista nas listas
+        // n esquecam de adicionar o passageiro/motorista nas listas
 
         Passageiro p = new Passageiro("André", "12345678900", "andreprofessor@gmail.com", "senhasecreta123", "61999999999");
 
