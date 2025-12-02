@@ -6,5 +6,5 @@ public enum StatusCorrida {
     EM_ANDAMENTO,
     FINALIZADA,
     CANCELADA,
-    PENDENTE_PAGAMENTO
+    PAGAMENTO_PENDENTE
 }
