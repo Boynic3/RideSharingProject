@@ -15,4 +15,9 @@ public class Pix implements MetodoPagamento {
 	public String getMetodo() {
 		return "Pix";
 	}
+
+    @Override
+    public String toString() {
+        return "Pix";   // Se quiser mostrar a chave: return "Pix (Chave: " + this.chavePix + ")";
+    }
 }

@@ -16,4 +16,9 @@ public class CartaoCredito implements MetodoPagamento {
     public String getMetodo() {
     	return "Cartão de Crédito";
     }
+
+    @Override
+    public String toString() {
+        return "Cartão de Crédito";    // Se quiser mostrar a bandeira: return "Cartão de Crédito (" + this.bandeira + ")";
+    }
 }

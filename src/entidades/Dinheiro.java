@@ -18,4 +18,9 @@ public class Dinheiro implements MetodoPagamento{
 		return "Dinheiro";
 	}
 
+    @Override
+    public String toString() {
+        return "Dinheiro"; //Pra mostrar o saldo    return "Dinheiro (saldo: " + this.saldo + ")";
+    }
+
 }

@@ -402,7 +402,8 @@ public class Principal {
                 System.out.println("CPF: " + p.getCpf());
                 System.out.println("Email " + p.getEmail());
                 System.out.println("Telefone: " + p.getTelefone());
-                System.out.println("Saldo pendente?" + respostaSaldo);
+                System.out.println("Saldo pendente? " + respostaSaldo);
+                System.out.println("Metodo de pagamento: " + p.getPagamento());
                 System.out.println("-------------------------");
             }
 
@@ -432,11 +433,23 @@ public class Principal {
     }
 
     private static void testeInicializarDados() {
+        // n esquecam de adcionar o passageiro/motorista nas listas
+
         Passageiro p = new Passageiro("André", "12345678900", "andreprofessor@gmail.com", "senhasecreta123", "61999999999");
+
+        MetodoPagamento pagamentoDinheiro = new Dinheiro(500.0);
+        p.setPagamento(pagamentoDinheiro);
+
         passageiros.add(p);
-        Motorista m = new Motorista("José", "98765432100", "jose@gmail.com", "senhaMenosSecreta123", "61988888888", "00123456789", "OFFLINE");
+
+        Motorista m = new Motorista("José", "98765432100", "jose@gmail.com", "senhaMenosSecreta123", "61988888888", "00123456789", "ONLINE");
         motoristas.add(m);
         Veiculo v = new Veiculo("Toyota Corolla", "Prata", "ABC-1234", 2021, 2020);
         m.setCarro(v);
+
+        Motorista m2 = new Motorista("Creusa", "11122233344", "creusauber@gmail.com", "senhaCreusa123", "61977777777", "00987654321", "OFFLINE");
+        motoristas.add(m2);
+        Veiculo v2 = new Veiculo("Honda Civic", "Preto", "XYZ-5678", 2020, 2020);
+        m2.setCarro(v2);
     }
 }
