@@ -1,10 +1,13 @@
 package entidades;
 
 public class Dinheiro implements MetodoPagamento{
-    public Dinheiro(){
+    private double saldo;
+
+    public Dinheiro(Double saldo) {
+        this.saldo = saldo;
     }
 
-	@Override
+    @Override
 	public boolean processarPagamento(double valor) {
 		System.out.println("Pagamento de R$"  + valor + " recebido em Dinheiro.");
 		return true;

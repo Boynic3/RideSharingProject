@@ -1,7 +1,7 @@
 package entidades;
 
 public class CartaoCredito implements MetodoPagamento {
-    String numeroCartao, bandeira, numValidade, CVV;
+    private String numeroCartao, bandeira, numValidade, CVV;
     public CartaoCredito(String numeroCartao, String bandeira, String numValidade, String CVV) {
         this.numeroCartao = numeroCartao;
         this.bandeira = bandeira;

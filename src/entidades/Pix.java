@@ -1,7 +1,7 @@
 package entidades;
 
 public class Pix implements MetodoPagamento {
-    String chavePix;
+    private String chavePix;
     public Pix(String chavePix) {
         this.chavePix = chavePix;
     }

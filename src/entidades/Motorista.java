@@ -9,24 +9,31 @@ public class Motorista extends UsuarioComum {
     Corrida viagem;
 
     public Motorista(String nome, String cpf, String email, String senha, String telefone, String statusMotorista) {
-        super(nome,cpf,email,senha,telefone);
+        super(nome, cpf, email, senha, telefone);
         this.setStatusMotorista(statusMotorista);
         this.cnh = cnh;
     }
 
-	public String getCnh() {
-		return cnh;
-	}
+    public String getCnh() {
+        return cnh;
+    }
 
-	public void setCnh(String cnh) {
-		this.cnh = cnh;
-	}
+    public void setCnh(String cnh) {
+        this.cnh = cnh;
+    }
 
-	public String getStatusMotorista() {
-		return statusMotorista;
-	}
+    public String getStatusMotorista() {
+        return statusMotorista;
+    }
 
-	public void setStatusMotorista(String statusMotorista) {
-		this.statusMotorista = statusMotorista;
-	}
+    public void setStatusMotorista(String statusMotorista) {
+        this.statusMotorista = statusMotorista;
+    }
+
+    public String getCarro() {
+        return carro.toString();
+    }
+    public void setCarro(Veiculo carro) {
+        this.carro = carro;
+    }
 }

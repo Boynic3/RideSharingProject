@@ -7,14 +7,15 @@ import exceptions.EstadoInvalidoDaCorridaException;
 
 public class Corrida {
     private String localPartida, localFinal;
-    private double preco;
+    private double kilometragem;
     private boolean viagemIniciada = false;
-    Passageiro passageiro;
-    boolean b = MetodoPagamento.validaPagamento(passageiro);
+    Passageiro p;
+
 
     public Corrida(String localPartida, String localFinal, double kilometragem) {
         this.localPartida = localPartida;
         this.localFinal = localFinal;
+        this.kilometragem = kilometragem;
     }
 
     public String getLocalPartida() {
@@ -25,22 +26,19 @@ public class Corrida {
         return localFinal;
     }
 
-    public double getPreco() {
-        return this.preco;
-    }
 
-    public double corridaPreco(double preco) {
-        this.preco = preco;
-        return preco;
-    }
 
     public void inicializarViagem() {
         System.out.println("Viagem iniciada!");
         viagemIniciada = true;
     }
 
-    public void finalizarViagem(boolean b) {
+    public void finalizarViagem() {
+        viagemIniciada = false;
         System.out.println("Viagem finalizada!");
+    }
+    public boolean isViagemIniciada(){
+        return viagemIniciada;
     }
 
     public void cancelarViagem(boolean viagemIniciada) throws EstadoInvalidoDaCorridaException {
@@ -48,5 +46,8 @@ public class Corrida {
             throw new EstadoInvalidoDaCorridaException("Erro ao cancelar viagem! Corrida não iniciada.");
         }
         System.out.println("Erro ao cancelar viagem!");
+    }
+    public double getKilometragem() {
+        return kilometragem;
     }
 }

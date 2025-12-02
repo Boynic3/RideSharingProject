@@ -11,9 +11,8 @@ public class CategoriaCorrida {
         this.setKilometragem(preco * tarifaBase);
     }
 
-    public double calcularPreco(int tarifaBase, double multiplicador, double kilometragem, double preco){
-        preco = tarifaBase + multiplicador * kilometragem;
-        return preco;
+    public double calcularPreco(int tarifaBase, double multiplicador, double kilometragem){
+        return tarifaBase + multiplicador * kilometragem;;
     }
 
 	public int getTarifaBase() {
