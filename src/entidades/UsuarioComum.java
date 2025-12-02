@@ -48,5 +48,9 @@ public class UsuarioComum {
         return senha;
     }
 
+    public String getTelefone() {
+        return telefone;
+    }
+
 }
 

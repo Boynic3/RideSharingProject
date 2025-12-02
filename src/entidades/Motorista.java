@@ -1,16 +1,18 @@
 package entidades;
 
+import enums.StatusMotorista;
 import servicos.Corrida;
+import enums.StatusCorrida;
 
 public class Motorista extends UsuarioComum {
     private String cnh;
-    private String statusMotorista;
+    private StatusMotorista status;
     Veiculo carro;
     Corrida viagem;
 
-    public Motorista(String nome, String cpf, String email, String senha, String telefone, String statusMotorista) {
+    public Motorista(String nome, String cpf, String email, String senha, String telefone, String cnh, String statusMotorista) {
         super(nome, cpf, email, senha, telefone);
-        this.setStatusMotorista(statusMotorista);
+        this.status = StatusMotorista.valueOf(statusMotorista);
         this.cnh = cnh;
     }
 
@@ -22,12 +24,16 @@ public class Motorista extends UsuarioComum {
         this.cnh = cnh;
     }
 
-    public String getStatusMotorista() {
-        return statusMotorista;
+    public StatusMotorista getStatusMotorista() {
+        return status;
     }
 
-    public void setStatusMotorista(String statusMotorista) {
-        this.statusMotorista = statusMotorista;
+    public void setStatusMotorista(String novoStatusTexto) {
+        try {
+            this.status = StatusMotorista.valueOf(novoStatusTexto);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: Status '" + novoStatusTexto + "' não existe no sistema.");
+        }
     }
 
     public String getCarro() {

@@ -2,6 +2,7 @@ package servicos;
 
 import entidades.MetodoPagamento;
 import entidades.Passageiro;
+import enums.StatusCorrida;
 import exceptions.EstadoInvalidoDaCorridaException;
 
 
@@ -9,6 +10,7 @@ public class Corrida {
     private String localPartida, localFinal;
     private double kilometragem;
     private boolean viagemIniciada = false;
+    private StatusCorrida status;
     Passageiro p;
 
 
@@ -16,6 +18,7 @@ public class Corrida {
         this.localPartida = localPartida;
         this.localFinal = localFinal;
         this.kilometragem = kilometragem;
+        this.status = StatusCorrida.SOLICITADA;
     }
 
     public String getLocalPartida() {
@@ -49,5 +52,13 @@ public class Corrida {
     }
     public double getKilometragem() {
         return kilometragem;
+    }
+
+    public StatusCorrida getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusCorrida status) {
+        this.status = status;
     }
 }

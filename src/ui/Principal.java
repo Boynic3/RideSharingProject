@@ -1,5 +1,6 @@
 package ui;
 import entidades.*;
+import enums.StatusMotorista;
 import servicos.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class Principal {
     public static void main(String[] args) {
 
         int opcao = 1;
-
+        testeInicializarDados();
         System.out.println(" ==== Ride Sharing Iniciado ====");
         do {
             System.out.println("1- Cadastrar Passageiro");
@@ -179,7 +180,7 @@ public class Principal {
         System.out.print("CNH: ");
         String cnh = Principal.ler.nextLine();
 
-        Motorista m = new Motorista(nome, cpf, senha, email, telefone, cnh);
+        Motorista m = new Motorista(nome, cpf, senha, email, telefone, cnh, "OFFLINE");
         cadastrarVeiculo(m);
 
         Principal.motoristas.add(m);
@@ -206,17 +207,75 @@ public class Principal {
     }
 
     private static void alterarStatus() {
-
+        if (Principal.motoristas.isEmpty()) {
+            System.out.println("Não há motoristas cadastrados.");
+            return;
+        }
+        System.out.println("==Alterar status do motorista==");
+        Motorista m = selecionarMotorista();
+        System.out.println("Status atual: " + m.getStatusMotorista());
+        System.out.println("Defina o novo status de " + m.getNome() + ": ");
+        System.out.println("1- Online\n2- Offline");
+        int statusEscolhido = Integer.parseInt(Principal.ler.nextLine());
+        if (statusEscolhido == 1) {
+            m.setStatusMotorista("ONLINE");
+        } else if (statusEscolhido == 2) {
+            m.setStatusMotorista("OFFLINE");
+        } else {
+            System.out.println("Status inválido. Operação cancelada.");
+            return;
+        }
         System.out.println("Status alterado");
     }
 
     private static void solicitarCorrida() {
         int preco = 0;
+        System.out.println("==Solicitar Corrida==");
+
+        System.out.println("Qual é o passageiro?");
+        Passageiro p = selecionarPassageiro();
+
+        if (p == null) {
+            System.out.println("Passageiro inválido ou cancelado.");
+            return;
+        }
+
+        System.out.println("Escolha um Motorista disponível (ONLINE):");
+
+
+        java.util.List<Motorista> disponiveis = new java.util.ArrayList<>();
+
+        for (Motorista mot : Principal.motoristas) {
+            if (mot.getStatusMotorista() == StatusMotorista.ONLINE) {
+                disponiveis.add(mot);
+            }
+        }
+
+        if (disponiveis.isEmpty()) {
+            System.out.println("Nenhum motorista online no momento.");
+            return;
+        }
+
+        for (int i = 0; i < disponiveis.size(); i++) {
+            System.out.println((i + 1) + "- " + disponiveis.get(i).getNome());
+        }
+
+        int escolhaMot = Integer.parseInt(Principal.ler.nextLine());
+
+        if (escolhaMot < 1 || escolhaMot > disponiveis.size()) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+
+        Motorista m = disponiveis.get(escolhaMot - 1);
+        System.out.println("Motorista " + m.getNome() + " selecionado.");
+
+
         System.out.println("Digite o local de partida: ");
         String localPartida = Principal.ler.nextLine();
         System.out.println("Digite o local de chegada: ");
         String localFinal = Principal.ler.nextLine();
-        System.out.println("Digite a distância da viagem (em Kms): ");
+        System.out.println("Digite a distância da viagem (em Km): ");
         Double kilometragem = Double.parseDouble(Principal.ler.nextLine());
 
         Corrida c = new Corrida(localPartida, localFinal, kilometragem);
@@ -228,8 +287,6 @@ public class Principal {
         System.out.println("2. Luxo");
         int G = Integer.parseInt(Principal.ler.nextLine());
 
-        // Removida a instanciação direta de CategoriaComum/CategoriaLuxo (esses exigiam argumentos).
-        // Calcular preço diretamente para evitar erros de construtor.
         double precoDouble;
         if (G == 1){
             precoDouble = 5.0 + 1.0 * kilometragem;
@@ -244,20 +301,40 @@ public class Principal {
         System.out.println("Corrida solicitada");
     }
 
+    private static Passageiro selecionarPassageiro() {
+        if (Principal.passageiros.isEmpty()) {
+            System.out.println("Não há passageiros cadastrados.");
+            return null;
+        }
+        for(int i = 0; i < Principal.passageiros.size(); i++){
+            Passageiro p = Principal.passageiros.get(i);
+            System.out.println((i + 1) + "- " + p.getNome());
+        }
+        System.out.println("Escolha um passageiro: ");
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        return Principal.passageiros.get(escolha - 1);
+    }
+
 
     private static void finalizarViagem() {
-        Corrida c = selecionarViagem(); // corrigido: selecionarViagem() retorna Corrida
+        Corrida c = selecionarViagem();
         if(c != null && c.isViagemIniciada() == true){
             c.finalizarViagem();
         }
     }
 
     private static Motorista selecionarMotorista() {
+        if (Principal.motoristas.isEmpty()) {
+            System.out.println("Não há motoristas cadastrados.");
+            return null;
+        }
         for (int i = 0; i < Principal.motoristas.size(); i++) {
-            System.out.println(i + "_" + Principal.motoristas.get(i).toString());
+            Motorista m = Principal.motoristas.get(i);
+            System.out.println((i + 1) + "- " + m.getNome() + "(" + m.getStatusMotorista() + ")");
         }
         System.out.println("Escolha um motorista: ");
-        return Principal.motoristas.get(Integer.parseInt(Principal.ler.nextLine()));
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        return Principal.motoristas.get(escolha - 1);
     }
 
     private static Corrida selecionarViagem() {
@@ -309,16 +386,23 @@ public class Principal {
         }
     }
     private static void listarPassageiros() {
-        if (Principal.motoristas.isEmpty()) {
-            System.out.println("Não há motoristas cadastrados.");
+        if (Principal.passageiros.isEmpty()) {
+            System.out.println("Não há passageiros cadastrados.");
         } else {
             System.out.println("Passageiros: ");
             for (Passageiro p : Principal.passageiros) {
+                String respostaSaldo =  "";
+                if (p.isSaldoPendente() == false){
+                    respostaSaldo = "Não. Tudo pago";
+                } else {
+                    respostaSaldo = "Sim. Pagamento pendente";
+                }
                 System.out.println("-------------------------");
                 System.out.println("Nome: " + p.getNome());
                 System.out.println("CPF: " + p.getCpf());
                 System.out.println("Email " + p.getEmail());
-                System.out.println("Saldo pendente?" + p.isSaldoPendente());
+                System.out.println("Telefone: " + p.getTelefone());
+                System.out.println("Saldo pendente?" + respostaSaldo);
                 System.out.println("-------------------------");
             }
 
@@ -326,6 +410,10 @@ public class Principal {
     }
 
     private static void avaliarMotorista() {
+        if (Principal.motoristas.isEmpty()) {
+            System.out.println("Não há motoristas cadastrados.");
+            return;
+        }
         System.out.println("==Avaliar motoristas==");
         System.out.println("Qual motorista você quer avaliar: ");
 
@@ -333,9 +421,22 @@ public class Principal {
     }
 
     private static void avaliarPassageiro() {
+        if (Principal.passageiros.isEmpty()) {
+            System.out.println("Não há passageiros cadastrados.");
+            return;
+        }
         System.out.println("==Avaliar passageiros==");
         System.out.println("Qual passageiro você quer avaliar: ");
 
 
+    }
+
+    private static void testeInicializarDados() {
+        Passageiro p = new Passageiro("André", "12345678900", "andreprofessor@gmail.com", "senhasecreta123", "61999999999");
+        passageiros.add(p);
+        Motorista m = new Motorista("José", "98765432100", "jose@gmail.com", "senhaMenosSecreta123", "61988888888", "00123456789", "OFFLINE");
+        motoristas.add(m);
+        Veiculo v = new Veiculo("Toyota Corolla", "Prata", "ABC-1234", 2021, 2020);
+        m.setCarro(v);
     }
 }
