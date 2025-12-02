@@ -60,7 +60,7 @@ public class Principal {
                         cancelarViagem();
                         break;
                     case 8:
-                        processarPagamento();
+                        processarPagamentoMain();
                         break;
                     case 9:
                         verCorridas();
@@ -318,8 +318,9 @@ public class Principal {
 
     private static void finalizarViagem() {              //Arruma esse metodo
         Corrida c = selecionarViagem();
-        if(c != null && c.isViagemIniciada() == true){
+        if(c != null && c.isViagemIniciada()){
             c.finalizarViagem();
+            processarPagamentoMain();
         }
     }
 
@@ -352,16 +353,16 @@ public class Principal {
         }
     }
 
-    private static void processarPagamento() {    //Implementa isso pra depois que a corrida seja finalizada,
-                                                  //esse metodo seja chamado e pague a corrida
-        System.out.println("Pagamento processado");
+    private static void processarPagamentoMain() {    //Implementa isso pra depois que a corrida seja finalizada,
+        Passageiro c = selecionarPassageiro();
+        MetodoPagamento pagamento = c.getPagamento();//esse metodo seja chamado e pague a corrida
+        pagamento.processarPagamento();
     }
 
     private static void verCorridas() {           //Ajeita o verCorridas depois de dar um jeito
         System.out.println("Corridas: ");         //de fazer a corrida ser iniciada e virar um objeto
         for (Corrida c : Principal.corridas) {
             System.out.println("-------------------------");
-
             System.out.println("Inicio " + c.getLocalPartida());
             System.out.println("Fim " + c.getLocalFinal());
             System.out.println("Distância: " + c.getKilometragem());
@@ -429,7 +430,15 @@ public class Principal {
         System.out.println("==Avaliar passageiros==");
         System.out.println("Qual passageiro você quer avaliar: ");
 
+        Passageiro p = selecionarPassageiro();
 
+        System.out.println("Qual Nota você quer dar a esse passageiro?: ");
+
+        int avaliacao = Integer.parseInt(Principal.ler.nextLine());
+
+        p.darNota(avaliacao);
+
+        System.out.println("Nota Adicionada com successo!");
     }
 
     private static void testeInicializarDados() {

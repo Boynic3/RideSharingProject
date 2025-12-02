@@ -8,9 +8,8 @@ public class Dinheiro implements MetodoPagamento{
     }
 
     @Override
-	public boolean processarPagamento(double valor) {
-		System.out.println("Pagamento de R$"  + valor + " recebido em Dinheiro.");
-		return true;
+	public void processarPagamento() {
+		System.out.println("Pagamento recebido em Dinheiro.");
 	}
 
 	@Override

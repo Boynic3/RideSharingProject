@@ -2,7 +2,7 @@ package entidades;
 
 public interface MetodoPagamento {
 
-    public boolean processarPagamento(double valor);
+    public void processarPagamento();
     public String getMetodo();
     
 

@@ -6,9 +6,8 @@ public class Pix implements MetodoPagamento {
         this.chavePix = chavePix;
     }
 	@Override
-	public boolean processarPagamento(double valor) {
-		System.out.println("Pagamento de R$" + valor + " recebido em Pix.");
-		return true;
+	public void processarPagamento() {
+		System.out.println("Pagamento recebido em Pix.");
 	}
 
 	@Override

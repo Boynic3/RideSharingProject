@@ -8,9 +8,8 @@ public class CartaoCredito implements MetodoPagamento {
         this.numValidade = numValidade;
         this.CVV = CVV;
     }
-    public boolean processarPagamento(double valor){
-    	System.out.println("Processando pagamento R$" + valor + " no Crédito...");
-    	return true;
+    public void processarPagamento(){
+    	System.out.println("Pagamento processado no Crédito...");
     	}
     
     public String getMetodo() {
