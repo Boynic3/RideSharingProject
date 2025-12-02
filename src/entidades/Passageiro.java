@@ -30,13 +30,14 @@ public class Passageiro extends UsuarioComum {
         return this.tipoPagamento;
     }
     public void darNota(double nota) {
-        this.nota = nota;
-        notas.add(nota);
+        Nota n;
+        n = new Nota(nota);
+        notas.add(n);
     }
     public double calcularNota() {
         double temp = 0.0;
         for (int i = 0; i < notas.size(); i++) {
-            notas[i] += temp;
+            temp += notas.get(i).getNota();
             temp = temp/notas.size();
         }
         return temp;

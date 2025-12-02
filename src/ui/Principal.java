@@ -3,6 +3,7 @@ import entidades.*;
 import enums.StatusMotorista;
 import servicos.*;
 
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -159,7 +160,7 @@ public class Principal {
             default:
                 if (escolha !=1 || escolha !=2 || escolha !=3 ) {
                     cadastrarMetodoPagamentoPassageiro(m);
-                };
+                }
         }
         System.out.println("Método de pagamento adicionado ao passageiro!\n");
 
@@ -229,11 +230,12 @@ public class Principal {
     }
 
     private static void solicitarCorrida() {
-        int preco = 0;
+
         System.out.println("==Solicitar Corrida==");
 
         System.out.println("Qual é o passageiro?");
         Passageiro p = selecionarPassageiro();
+        System.out.println(p.getNome());
 
         if (p == null) {
             System.out.println("Passageiro inválido ou cancelado.");
@@ -348,7 +350,7 @@ public class Principal {
 
     private static void cancelarViagem() {        //Mesma coisa com esse aqui, ajeitar como expliquei
         Corrida c = selecionarViagem();
-        if(c.isViagemIniciada() == true){
+        if(c.isViagemIniciada()){
             c.finalizarViagem();
         }
     }
@@ -382,6 +384,7 @@ public class Principal {
                 System.out.println("Carro " + m.getCarro());
                 System.out.println("CNH: " + m.getCnh());
                 System.out.println("Status atual: " + m.getStatusMotorista());
+                System.out.println("Avaliação: " + m.calcularNota());
                 System.out.println("-------------------------");
             }
         }
@@ -405,6 +408,7 @@ public class Principal {
                 System.out.println("Telefone: " + p.getTelefone());
                 System.out.println("Saldo pendente? " + respostaSaldo);
                 System.out.println("Metodo de pagamento: " + p.getPagamento());
+                System.out.println(("Avaliacao: " + p.calcularNota()));
                 System.out.println("-------------------------");
             }
 
@@ -419,7 +423,15 @@ public class Principal {
         System.out.println("==Avaliar motoristas==");
         System.out.println("Qual motorista você quer avaliar: ");
 
+        Motorista m = selecionarMotorista();
 
+        System.out.println("Qual Nota você quer dar a esse Motorista?: ");
+        double avaliacao = Integer.parseInt(Principal.ler.nextLine());
+
+        m.darNota(avaliacao);
+
+        System.out.println("Nota Adicionada com successo!");
+        System.out.println("A nota atual desse Passageiro é: " + m.calcularNota());
     }
 
     private static void avaliarPassageiro() {
@@ -439,6 +451,7 @@ public class Principal {
         p.darNota(avaliacao);
 
         System.out.println("Nota Adicionada com successo!");
+        System.out.println("A nota atual desse Passageiro é: " + p.calcularNota());
     }
 
     private static void testeInicializarDados() {

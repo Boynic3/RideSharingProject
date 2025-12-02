@@ -4,11 +4,16 @@ import enums.StatusMotorista;
 import servicos.Corrida;
 import enums.StatusCorrida;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Motorista extends UsuarioComum {
     private String cnh;
     private StatusMotorista status;
     Veiculo carro;
     Corrida viagem;
+
+    private static List<Nota> notas = new ArrayList<>();
 
     public Motorista(String nome, String cpf, String email, String senha, String telefone, String cnh, String statusMotorista) {
         super(nome, cpf, email, senha, telefone);
@@ -42,4 +47,19 @@ public class Motorista extends UsuarioComum {
     public void setCarro(Veiculo carro) {
         this.carro = carro;
     }
+
+    public void darNota(double nota) {
+        Nota n;
+        n = new Nota(nota);
+        notas.add(n);
+    }
+    public double calcularNota() {
+        double temp = 0.0;
+        for (int i = 0; i < notas.size(); i++) {
+            temp += notas.get(i).getNota();
+            temp = temp/notas.size();
+        }
+        return temp;
+    }
+
 }
