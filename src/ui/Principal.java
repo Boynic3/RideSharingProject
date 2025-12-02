@@ -1,8 +1,9 @@
 package ui;
 import entidades.*;
 import enums.StatusMotorista;
+import enums.StatusCorrida;
 import servicos.*;
-
+import exceptions.*;
 import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Scanner;
@@ -84,6 +85,8 @@ public class Principal {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Opção INVÁLIDA. Digite um número.");
+            } catch (EstadoInvalidoDaCorridaException e) {
+                throw new RuntimeException(e);
             }
 
             if (opcao != 0) {
@@ -241,6 +244,13 @@ public class Principal {
             System.out.println("Passageiro inválido ou cancelado.");
             return;
         }
+        try {
+            p.verificarSePodeViajar();
+        } catch (SaldoPendenteException e) {
+            System.out.println("ERRO: " + e.getMessage());
+            System.out.println("Vá para a opção 8 pagar a dívida antes.");
+            return; // Cancela a solicitação
+        }
 
         System.out.println("Escolha um Motorista disponível (ONLINE):");
 
@@ -253,8 +263,12 @@ public class Principal {
             }
         }
 
-        if (disponiveis.isEmpty()) {
-            System.out.println("Nenhum motorista online no momento.");
+        try {
+            if (disponiveis.isEmpty()) {
+                throw new NenhumMotoristaDisponivelException("Não há motoristas online no momento!");
+            }
+        } catch (NenhumMotoristaDisponivelException e) {
+            System.out.println("ERRO: " + e.getMessage());
             return;
         }
 
@@ -281,6 +295,10 @@ public class Principal {
         Double kilometragem = Double.parseDouble(Principal.ler.nextLine());
 
         Corrida c = new Corrida(localPartida, localFinal, kilometragem);
+        c.setPassageiro(p);
+        c.setMotorista(m);
+        c.setStatus(StatusCorrida.EM_ANDAMENTO);
+        m.setStatus(StatusMotorista.EM_CORRIDA);
         Principal.corridas.add(c);
         System.out.println("A sua corrida parte de " + localPartida + " até " + localFinal + " e tem " + kilometragem + "kms de distância");
 
@@ -299,7 +317,9 @@ public class Principal {
             return;
         }
 
-        System.out.println("O preço da viagem é  " + precoDouble);
+        c.setValorCalculado(precoDouble);
+        String precoFormatado = String.format("%.2f", precoDouble);
+        System.out.println("O preço da viagem é  " + precoFormatado);
         System.out.println("Corrida solicitada");
     }
 
@@ -318,11 +338,38 @@ public class Principal {
     }
 
 
-    private static void finalizarViagem() {              //Arruma esse metodo
-        Corrida c = selecionarViagem();
-        if(c != null && c.isViagemIniciada()){
-            c.finalizarViagem();
-            processarPagamentoMain();
+    private static void finalizarViagem() {
+        System.out.println("== Finalizar Viagem ==");
+
+        List<Corrida> emAndamento = new ArrayList<>();
+        for(Corrida c : Principal.corridas) {
+            if(c.getStatus() == StatusCorrida.EM_ANDAMENTO) {
+                emAndamento.add(c);
+            }
+        }
+
+        if(emAndamento.isEmpty()) {
+            System.out.println("Nenhuma corrida em andamento para finalizar.");
+            return;
+        }
+
+        for (int i = 0; i < emAndamento.size(); i++) {
+            System.out.println((i + 1) + "- " + emAndamento.get(i).toString());
+        }
+
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        Corrida c = emAndamento.get(escolha - 1);
+
+        c.setStatus(StatusCorrida.FINALIZADA);
+
+        if(c.getMotorista() != null) {
+            c.getMotorista().setStatusMotorista("ONLINE");
+        }
+
+        if(c.getPassageiro() != null) {
+            c.getPassageiro().setSaldoPendente(true);
+            System.out.println("Viagem finalizada! O passageiro " + c.getPassageiro().getNome() + " agora possui um débito pendente.");
+            System.out.println("Vá para a opção 8 (Processar Pagamento) para quitar a dívida.");
         }
     }
 
@@ -341,36 +388,94 @@ public class Principal {
     }
 
     private static Corrida selecionarViagem() {
+        System.out.println("Escolha uma viagem: ");
         for (int i = 0; i < Principal.corridas.size(); i++) {
-            System.out.println(i + "_" + Principal.corridas.get(i).toString());
+            System.out.println((i + 1) + "- " + Principal.corridas.get(i).toString());
         }
-        System.out.println("Escolha uma  viagem: ");
-        return Principal.corridas.get(Integer.parseInt(Principal.ler.nextLine()));
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        return Principal.corridas.get(escolha - 1);
     }
 
-    private static void cancelarViagem() {        //Mesma coisa com esse aqui, ajeitar como expliquei
+    private static void cancelarViagem() throws EstadoInvalidoDaCorridaException {        //Mesma coisa com esse aqui, ajeitar como expliquei
         Corrida c = selecionarViagem();
         if(c.isViagemIniciada()){
             c.finalizarViagem();
         }
     }
 
-    private static void processarPagamentoMain() {    //Implementa isso pra depois que a corrida seja finalizada,
-        Passageiro c = selecionarPassageiro();
-        MetodoPagamento pagamento = c.getPagamento();//esse metodo seja chamado e pague a corrida
-        pagamento.processarPagamento();
-    }
-
-    private static void verCorridas() {           //Ajeita o verCorridas depois de dar um jeito
-        System.out.println("Corridas: ");         //de fazer a corrida ser iniciada e virar um objeto
-        for (Corrida c : Principal.corridas) {
-            System.out.println("-------------------------");
-            System.out.println("Inicio " + c.getLocalPartida());
-            System.out.println("Fim " + c.getLocalFinal());
-            System.out.println("Distância: " + c.getKilometragem());
-            System.out.println("-------------------------");
+    private static void processarPagamentoMain() {
+        System.out.println("== Processar Pagamento ==");
+        List<Passageiro> devedores = new ArrayList<>();
+        for (Passageiro p : Principal.passageiros) {
+            if (p.isSaldoPendente()) {
+                devedores.add(p);
+            }
         }
 
+        if (devedores.isEmpty()) {
+            System.out.println("Nenhum passageiro possui dívidas pendentes.");
+            return;
+        }
+
+        System.out.println("Selecione o passageiro para pagar:");
+        for (int i = 0; i < devedores.size(); i++) {
+            System.out.println((i + 1) + "- " + devedores.get(i).getNome());
+        }
+
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        Passageiro pagador = devedores.get(escolha - 1);
+
+        double valorAPagar = 0.0;
+
+        for (int i = Principal.corridas.size() - 1; i >= 0; i--) {
+            Corrida c = Principal.corridas.get(i);
+            if (c.getPassageiro().equals(pagador) && c.getStatus() == StatusCorrida.FINALIZADA) {
+                valorAPagar = c.getValorCalculado();
+                break;
+            }
+        }
+
+        if (valorAPagar == 0.0) {
+            System.out.println("Erro: Não foi possível encontrar o valor da corrida.");
+            return;
+        }
+
+        System.out.println("Valor pendente: R$ " + valorAPagar);
+        System.out.println("Tentando pagar com " + pagador.getPagamento());
+
+        try {
+            pagador.getPagamento().processarPagamento(valorAPagar);
+
+            pagador.setSaldoPendente(false);
+            System.out.println("Dívida quitada com sucesso! Passageiro liberado para novas corridas.");
+
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("FALHA NO PAGAMENTO: " + e.getMessage());
+            System.out.println("O passageiro continua com a dívida e não pode solicitar novas corridas.");
+        }
+    }
+
+    private static void verCorridas() {
+        System.out.println("Corridas: ");
+        if (Principal.corridas.isEmpty()) {
+            System.out.println("Nenhuma corrida registrada.");
+            return;
+        }
+
+        for (Corrida c : Principal.corridas) {
+            System.out.println("-------------------------");
+
+            String nomePassageiro = (c.getPassageiro() != null) ? c.getPassageiro().getNome() : "Desconhecido";
+            String nomeMotorista = (c.getMotorista() != null) ? c.getMotorista().getNome() : "Desconhecido";
+
+            System.out.println("Corrida de " + nomePassageiro);
+
+            System.out.println("Motorista: " + nomeMotorista);
+            System.out.println("Status: " + c.getStatus());
+            System.out.println("De: " + c.getLocalPartida() + " -> Para: " + c.getLocalFinal());
+            System.out.println("Distância: " + c.getKilometragem() + " km");
+            System.out.println("-------------------------");
+        }
     }
 
     private static void listarMotoristas() {

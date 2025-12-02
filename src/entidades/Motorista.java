@@ -62,4 +62,7 @@ public class Motorista extends UsuarioComum {
         return temp;
     }
 
+    public void setStatus(StatusMotorista statusMotorista) {
+        this.status = statusMotorista;
+    }
 }

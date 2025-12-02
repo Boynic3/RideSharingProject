@@ -1,10 +1,7 @@
 package entidades;
+import exceptions.SaldoInsuficienteException;
 
 public interface MetodoPagamento {
-
-    public void processarPagamento();
-    public String getMetodo();
-    
-
-    }
-
+    void processarPagamento(double valor) throws SaldoInsuficienteException;
+    String getMetodo();
+}

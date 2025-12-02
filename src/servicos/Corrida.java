@@ -1,24 +1,58 @@
 package servicos;
 
-import entidades.MetodoPagamento;
+import entidades.Motorista;
 import entidades.Passageiro;
 import enums.StatusCorrida;
 import exceptions.EstadoInvalidoDaCorridaException;
 
-
 public class Corrida {
     private String localPartida, localFinal;
     private double kilometragem;
-    private boolean viagemIniciada = false;
     private StatusCorrida status;
-    Passageiro p;
 
+    private Passageiro p;
+
+    private Motorista motorista;
+    private double valorCalculado;
 
     public Corrida(String localPartida, String localFinal, double kilometragem) {
         this.localPartida = localPartida;
         this.localFinal = localFinal;
         this.kilometragem = kilometragem;
         this.status = StatusCorrida.SOLICITADA;
+    }
+
+    public void setPassageiro(Passageiro passageiroRecebido) {
+        this.p = passageiroRecebido;
+    }
+
+    public Passageiro getPassageiro() {
+        return this.p;
+    }
+
+
+    public void setMotorista(Motorista motorista) {
+        this.motorista = motorista;
+    }
+
+    public Motorista getMotorista() {
+        return motorista;
+    }
+
+    public void setValorCalculado(double valorCalculado) {
+        this.valorCalculado = valorCalculado;
+    }
+
+    public double getValorCalculado() {
+        return valorCalculado;
+    }
+
+    public StatusCorrida getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusCorrida status) {
+        this.status = status;
     }
 
     public String getLocalPartida() {
@@ -29,36 +63,30 @@ public class Corrida {
         return localFinal;
     }
 
-
-
-    public void inicializarViagem() {
-        System.out.println("Viagem iniciada!");
-        viagemIniciada = true;
-    }
-
-    public void finalizarViagem() {
-        viagemIniciada = false;
-        System.out.println("Viagem finalizada!");
-    }
-    public boolean isViagemIniciada(){
-        return viagemIniciada;
-    }
-
-    public void cancelarViagem(boolean viagemIniciada) throws EstadoInvalidoDaCorridaException {
-        if (viagemIniciada == false) {
-            throw new EstadoInvalidoDaCorridaException("Erro ao cancelar viagem! Corrida não iniciada.");
-        }
-        System.out.println("Erro ao cancelar viagem!");
-    }
     public double getKilometragem() {
         return kilometragem;
     }
 
-    public StatusCorrida getStatus() {
-        return status;
+    @Override
+    public String toString() {
+        String nomeP = (this.p != null) ? this.p.getNome() : "Sem Passageiro";
+        String nomeM = (this.motorista != null) ? this.motorista.getNome() : "Sem Motorista";
+
+        return "Corrida de " + nomeP + " (Motorista: " + nomeM + ")";
     }
 
-    public void setStatus(StatusCorrida status) {
-        this.status = status;
+    public boolean isViagemIniciada() {
+        return this.status == StatusCorrida.EM_ANDAMENTO;
     }
+
+    public void finalizarViagem() throws EstadoInvalidoDaCorridaException {
+        if (this.status != StatusCorrida.EM_ANDAMENTO) {
+            throw new EstadoInvalidoDaCorridaException("Não é possível finalizar uma corrida que está " + this.status);
+        }
+
+        this.status = StatusCorrida.FINALIZADA;
+        System.out.println("Viagem finalizada com sucesso (Status atualizado).");
+    }
+
+
 }
