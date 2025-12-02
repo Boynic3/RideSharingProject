@@ -3,7 +3,11 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
+# Ignorar todos os arquivos .iml (recomendado)
+*.iml
 
+# Ou ignorar só o arquivo específico
+RideSharingProject.iml
 ### Eclipse ###
 .apt_generated
 .classpath
