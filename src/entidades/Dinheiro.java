@@ -7,6 +7,14 @@ public class Dinheiro implements MetodoPagamento {
     public Dinheiro(double saldo) {
         this.saldo = saldo;
     }
+    public void adicionarSaldo(double valor) {
+        if (valor > 0) {
+            this.saldo += valor;
+            System.out.println("Sucesso! Novo saldo em dinheiro: R$ " + String.format("%.2f", this.saldo));
+        } else {
+            System.out.println("Valor inválido para recarga.");
+        }
+    }
 
     @Override
     public void processarPagamento(double valor) throws SaldoInsuficienteException {

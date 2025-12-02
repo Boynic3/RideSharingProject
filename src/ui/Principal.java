@@ -4,7 +4,6 @@ import enums.StatusMotorista;
 import enums.StatusCorrida;
 import servicos.*;
 import exceptions.*;
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class Principal {
             System.out.println("11- Listar Passageiros");
             System.out.println("12- Avaliar Motorista");
             System.out.println("13- Avaliar Passageiro");
+            System.out.println("14- Recarregar saldo em dinheiro");
             System.out.println("0- Sair");
 
             System.out.print("Escolha uma opção: ");
@@ -78,6 +78,9 @@ public class Principal {
                         break;
                     case 13:
                         avaliarPassageiro();
+                        break;
+                    case 14:
+                        recarregarSaldoPassageiro();
                         break;
                     default:
                         System.out.println("Opção INVÁLIDA. Tente novamente.");
@@ -217,6 +220,11 @@ public class Principal {
         }
         System.out.println("==Alterar status do motorista==");
         Motorista m = selecionarMotorista();
+        if (m == null) return;
+        if (m.getStatusMotorista() == StatusMotorista.EM_CORRIDA) {
+            System.out.println("ERRO: O motorista " + m.getNome() + " está em corrida. Finalize a viagem (Opção 6) primeiro!");
+            return;
+        }
         System.out.println("Status atual: " + m.getStatusMotorista());
         System.out.println("Defina o novo status de " + m.getNome() + ": ");
         System.out.println("1- Online\n2- Offline");
@@ -233,27 +241,25 @@ public class Principal {
     }
 
     private static void solicitarCorrida() {
-
         System.out.println("==Solicitar Corrida==");
-
         System.out.println("Qual é o passageiro?");
-        Passageiro p = selecionarPassageiro();
-        System.out.println(p.getNome());
+        Passageiro p = selecionarPassageiroDisponivel();
 
         if (p == null) {
             System.out.println("Passageiro inválido ou cancelado.");
             return;
         }
+        System.out.println(p.getNome());
+
         try {
             p.verificarSePodeViajar();
         } catch (SaldoPendenteException e) {
             System.out.println("ERRO: " + e.getMessage());
             System.out.println("Vá para a opção 8 pagar a dívida antes.");
-            return; // Cancela a solicitação
+            return;
         }
 
         System.out.println("Escolha um Motorista disponível (ONLINE):");
-
 
         java.util.List<Motorista> disponiveis = new java.util.ArrayList<>();
 
@@ -299,28 +305,28 @@ public class Principal {
         c.setMotorista(m);
         c.setStatus(StatusCorrida.EM_ANDAMENTO);
         m.setStatus(StatusMotorista.EM_CORRIDA);
-        Principal.corridas.add(c);
         System.out.println("A sua corrida parte de " + localPartida + " até " + localFinal + " e tem " + kilometragem + "kms de distância");
 
         System.out.println("Categoria:");
         System.out.println("1. Comum");
         System.out.println("2. Luxo");
-        int G = Integer.parseInt(Principal.ler.nextLine());
+        int opcaoCat = Integer.parseInt(Principal.ler.nextLine());
 
-        double precoDouble;
-        if (G == 1){
-            precoDouble = 5.0 + 1.0 * kilometragem;
-        } else if (G == 2){
-            precoDouble = 9.0 + 2.20 * kilometragem;
+        if (opcaoCat == 1) {
+            c.setCategoria(new CategoriaComum());
+        } else if (opcaoCat == 2) {
+            c.setCategoria(new CategoriaLuxo());
         } else {
-            System.out.println("Categoria inválida. Cancelando solicitação.");
+            System.out.println("Categoria inválida. Cancelando.");
             return;
         }
 
-        c.setValorCalculado(precoDouble);
-        String precoFormatado = String.format("%.2f", precoDouble);
-        System.out.println("O preço da viagem é  " + precoFormatado);
-        System.out.println("Corrida solicitada");
+        c.calcularValorFinal();
+
+        Principal.corridas.add(c);
+
+        System.out.println("Corrida iniciada!");
+        System.out.println("Valor calculado pela categoria: R$ " + String.format("%.2f", c.getValorCalculado()));
     }
 
     private static Passageiro selecionarPassageiro() {
@@ -336,7 +342,40 @@ public class Principal {
         int escolha = Integer.parseInt(Principal.ler.nextLine());
         return Principal.passageiros.get(escolha - 1);
     }
+    private static Passageiro selecionarPassageiroDisponivel() {
+        List<Passageiro> ocupados = new ArrayList<>();
+        for (Corrida c : corridas) {
+            if (c.getStatus() == StatusCorrida.EM_ANDAMENTO) {
+                ocupados.add(c.getPassageiro());
+            }
+        }
 
+        List<Passageiro> disponiveis = new ArrayList<>();
+        for (Passageiro p : passageiros) {
+            if (!ocupados.contains(p)) {
+                disponiveis.add(p);
+            }
+        }
+
+        if (disponiveis.isEmpty()) {
+            System.out.println("Todos os passageiros estão em corridas no momento.");
+            return null;
+        }
+
+        for (int i = 0; i < disponiveis.size(); i++) {
+            System.out.println((i + 1) + "- " + disponiveis.get(i).getNome());
+        }
+
+        System.out.println("Escolha um passageiro: ");
+        int escolha = Integer.parseInt(Principal.ler.nextLine());
+
+        if (escolha < 1 || escolha > disponiveis.size()) {
+            System.out.println("Opção inválida.");
+            return null;
+        }
+
+        return disponiveis.get(escolha - 1);
+    }
 
     private static void finalizarViagem() {
         System.out.println("== Finalizar Viagem ==");
@@ -558,6 +597,35 @@ public class Principal {
         System.out.println("Nota Adicionada com successo!");
         System.out.println("A nota atual desse Passageiro é: " + p.calcularNota());
     }
+
+    private static void recarregarSaldoPassageiro() {
+        System.out.println("\n=== Recarregar Saldo (Apenas Dinheiro) ===");
+
+        Passageiro p = selecionarPassageiro();
+        if (p == null) return;
+
+        if (p.getPagamento() instanceof Dinheiro) {
+            Dinheiro metodoDinheiro = (Dinheiro) p.getPagamento();
+            System.out.println("Saldo Atual: " + p.getPagamento());
+            System.out.println("Quanto deseja adicionar?");
+
+            try {
+                double valor = Double.parseDouble(ler.nextLine());
+                metodoDinheiro.adicionarSaldo(valor);
+                if (p.isSaldoPendente()) {
+                    System.out.println("AVISO: Passageiro com débito pendente. Vá na opção 8 para pagar.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Valor inválido.");
+            }
+
+        } else {
+            System.out.println("ERRO: Este passageiro usa " + p.getPagamento().getMetodo());
+            System.out.println("A recarga de saldo só está disponível para quem paga em Dinheiro.");
+        }
+    }
+
 
     private static void testeInicializarDados() {
         // n esquecam de adicionar o passageiro/motorista nas listas
