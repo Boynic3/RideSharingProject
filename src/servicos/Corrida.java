@@ -9,9 +9,7 @@ public class Corrida {
     private String localPartida, localFinal;
     private double kilometragem;
     private StatusCorrida status;
-
-    private Passageiro p;
-
+    private Passageiro cliente;
     private Motorista motorista;
     private double valorCalculado;
 
@@ -23,11 +21,11 @@ public class Corrida {
     }
 
     public void setPassageiro(Passageiro passageiroRecebido) {
-        this.p = passageiroRecebido;
+        this.cliente = passageiroRecebido;
     }
 
     public Passageiro getPassageiro() {
-        return this.p;
+        return this.cliente;
     }
 
 
@@ -69,7 +67,7 @@ public class Corrida {
 
     @Override
     public String toString() {
-        String nomeP = (this.p != null) ? this.p.getNome() : "Sem Passageiro";
+        String nomeP = (this.cliente != null) ? this.cliente.getNome() : "Sem Passageiro";
         String nomeM = (this.motorista != null) ? this.motorista.getNome() : "Sem Motorista";
 
         return "Corrida de " + nomeP + " (Motorista: " + nomeM + ")";
