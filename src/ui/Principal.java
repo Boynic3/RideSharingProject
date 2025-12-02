@@ -20,18 +20,17 @@ public class Principal {
             System.out.println("3- Cadastrar Veículo");
             System.out.println("4- Status Motorista");
             System.out.println("5- Solicitar Corrida");
-            System.out.println("6- Iniciar Viagem");
-            System.out.println("7- Finalizar Viagem");
-            System.out.println("8- Cancelar Viagem");
-            System.out.println("9- Processar Pagamento ");
-            System.out.println("10- Corridas em andamento");
-            System.out.println("11- Listar Motoristas");
-            System.out.println("12- Listar Passageiros");
-            System.out.println("13- Avaliar Motorista");
-            System.out.println("14- Avaliar Passageiro");
+            System.out.println("6- Finalizar Viagem");
+            System.out.println("7- Cancelar Viagem");
+            System.out.println("8- Processar Pagamento ");
+            System.out.println("9- Corridas em andamento");
+            System.out.println("10- Listar Motoristas");
+            System.out.println("11- Listar Passageiros");
+            System.out.println("12- Avaliar Motorista");
+            System.out.println("13- Avaliar Passageiro");
             System.out.println("0- Sair");
 
-            System.out.print("Elerolha uma opção: ");
+            System.out.print("Escolha uma opção: ");
             try {
                 opcao = Integer.parseInt(ler.nextLine());
                 switch (opcao) {
@@ -117,7 +116,7 @@ public class Principal {
         passageiros.add(p);
         cadastrarMetodoPagamentoPassageiro(p);
 
-        System.out.println("Cadastro de passageiro realizado."); //Mudar isso dps
+        System.out.println("Cadastro de passageiro realizado.\n"); //Mudar isso dps
     }
 
     private static void cadastrarMetodoPagamentoPassageiro(Passageiro m) {
@@ -159,10 +158,9 @@ public class Principal {
             default:
                 if (escolha !=1 || escolha !=2 || escolha !=3 ) {
                     cadastrarMetodoPagamentoPassageiro(m);
-            };
+                };
         }
-        System.out.println("Método de pagamento adicionado ao passageiro!");
-    }
+        System.out.println("Método de pagamento adicionado ao passageiro!\n");
 
     }
 
@@ -187,7 +185,7 @@ public class Principal {
         Principal.motoristas.add(m);
 
 
-        System.out.println("Cadastro de motorista realizado."); // Colocar codigo aq dps
+        System.out.println("Cadastro de motorista realizado.\n"); // Colocar codigo aq dps
     }
 
     private static void cadastrarVeiculo(Motorista m) {
@@ -204,7 +202,7 @@ public class Principal {
         Veiculo c = new Veiculo(modelo, cor, placa, anoFab, anoModelo);
         m.setCarro(c);
 
-        System.out.println("Cadastro de veículo realizado.");
+        System.out.println("Cadastro de veículo realizado.\n");
     }
 
     private static void alterarStatus() {
@@ -229,41 +227,48 @@ public class Principal {
         System.out.println("1. Comum");
         System.out.println("2. Luxo");
         int G = Integer.parseInt(Principal.ler.nextLine());
-        CategoriaCorrida categoria = (c == 1 ? new CategoriaComum() : new CategoriaLuxo());
 
+        // Removida a instanciação direta de CategoriaComum/CategoriaLuxo (esses exigiam argumentos).
+        // Calcular preço diretamente para evitar erros de construtor.
+        double precoDouble;
         if (G == 1){
-            categoria.calcularPreco(5,1,kilometragem);
-        }else if (G == 2){
-            categoria.calcularPreco(9,2.20,kilometragem);
+            precoDouble = 5.0 + 1.0 * kilometragem;
+        } else if (G == 2){
+            precoDouble = 9.0 + 2.20 * kilometragem;
+        } else {
+            System.out.println("Categoria inválida. Cancelando solicitação.");
+            return;
         }
-        System.out.println("O preço da viagem é igual a " + categoria.getPreco());
+
+        System.out.println("O preço da viagem é  " + precoDouble);
         System.out.println("Corrida solicitada");
     }
 
 
     private static void finalizarViagem() {
-        Corrida c = selecionarMotorista();
-        if(c.isViagemIniciada() == true){
-        c.finalizarViagem();}
+        Corrida c = selecionarViagem(); // corrigido: selecionarViagem() retorna Corrida
+        if(c != null && c.isViagemIniciada() == true){
+            c.finalizarViagem();
+        }
     }
 
-private static Motorista selecionarMotorista() {
-    for (int i = 0; i < Principal.motoristas.size(); i++) {
-        System.out.println(i + "_" + Principal.motoristas.get(i).toString());
+    private static Motorista selecionarMotorista() {
+        for (int i = 0; i < Principal.motoristas.size(); i++) {
+            System.out.println(i + "_" + Principal.motoristas.get(i).toString());
+        }
+        System.out.println("Escolha um motorista: ");
+        return Principal.motoristas.get(Integer.parseInt(Principal.ler.nextLine()));
     }
-    System.out.println("Escolha um motorista: ");
-    return Principal.motoristas.get(Integer.parseInt(Principal.ler.nextLine()));
-}
 
-private static Corrida selecionarViagem() {
-    for (int i = 0; i < Principal.corridas.size(); i++) {
-        System.out.println(i + "_" + Principal.corridas.get(i).toString());
+    private static Corrida selecionarViagem() {
+        for (int i = 0; i < Principal.corridas.size(); i++) {
+            System.out.println(i + "_" + Principal.corridas.get(i).toString());
+        }
+        System.out.println("Escolha uma  viagem: ");
+        return Principal.corridas.get(Integer.parseInt(Principal.ler.nextLine()));
     }
-    System.out.println("Escolha uma  viagem: ");
-    return Principal.corridas.get(Integer.parseInt(Principal.ler.nextLine()));
-}
 
-private static void cancelarViagem() {
+    private static void cancelarViagem() {
         Corrida c = selecionarViagem();
         if(c.isViagemIniciada() == true){
             c.finalizarViagem();
@@ -277,42 +282,47 @@ private static void cancelarViagem() {
 
     private static void verCorridas() {
         System.out.println("Corridas: ");
-    for (Corrida c : Principal.corridas) {
-        System.out.println("-------------------------");
+        for (Corrida c : Principal.corridas) {
+            System.out.println("-------------------------");
 
-        System.out.println("Inicio " + c.getLocalPartida());
-        System.out.println("Fim " + c.getLocalFinal());
-        System.out.println("Distância: " + c.getKilometragem());
-        System.out.println("-------------------------");
-    }
+            System.out.println("Inicio " + c.getLocalPartida());
+            System.out.println("Fim " + c.getLocalFinal());
+            System.out.println("Distância: " + c.getKilometragem());
+            System.out.println("-------------------------");
+        }
 
     }
 
     private static void listarMotoristas() {
-        System.out.println("Motoristas: ");
-        for (Motorista m : Principal.motoristas) {
-            System.out.println("-------------------------");
-            System.out.println("Nome: " + m.getNome());
-            System.out.println("Carro " + m.getCarro());
-            System.out.println("CNH: " + m.getCnh());
-            System.out.println("Status atual: " + m.getStatusMotorista());
-            System.out.println("-------------------------");
+        if (Principal.motoristas.isEmpty()) {
+            System.out.println("Não há motoristas cadastrados.");
+        } else {
+            System.out.println("Motoristas: ");
+            for (Motorista m : Principal.motoristas) {
+                System.out.println("-------------------------");
+                System.out.println("Nome: " + m.getNome());
+                System.out.println("Carro " + m.getCarro());
+                System.out.println("CNH: " + m.getCnh());
+                System.out.println("Status atual: " + m.getStatusMotorista());
+                System.out.println("-------------------------");
+            }
         }
-
-
     }
-
     private static void listarPassageiros() {
-        System.out.println("Passageiros: ");
-        for (Passageiro m : Principal.passageiros) {
-            System.out.println("-------------------------");
-            System.out.println("Nome: " + m.getNome());
-            System.out.println("CPF: " + m.getCpf());
-            System.out.println("Email " + m.getEmail());
-            System.out.println("Saldo pendente?" + m.isSaldoPendente());
-            System.out.println("-------------------------");
-        }
+        if (Principal.motoristas.isEmpty()) {
+            System.out.println("Não há motoristas cadastrados.");
+        } else {
+            System.out.println("Passageiros: ");
+            for (Passageiro p : Principal.passageiros) {
+                System.out.println("-------------------------");
+                System.out.println("Nome: " + p.getNome());
+                System.out.println("CPF: " + p.getCpf());
+                System.out.println("Email " + p.getEmail());
+                System.out.println("Saldo pendente?" + p.isSaldoPendente());
+                System.out.println("-------------------------");
+            }
 
+        }
     }
 
     private static void avaliarMotorista() {

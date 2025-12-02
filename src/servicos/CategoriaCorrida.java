@@ -12,7 +12,7 @@ public class CategoriaCorrida {
     }
 
     public double calcularPreco(int tarifaBase, double multiplicador, double kilometragem){
-        return tarifaBase + multiplicador * kilometragem;;
+        return tarifaBase + multiplicador * kilometragem;
     }
 
 	public int getTarifaBase() {

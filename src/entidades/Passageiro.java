@@ -2,21 +2,25 @@ package entidades;
 
 public class Passageiro extends UsuarioComum {
     private boolean saldoPendente = false;
-    MetodoPagamento tipoPagamento;
+    private MetodoPagamento tipoPagamento;
 
     public Passageiro(String nome, String cpf, String email, String senha, String telefone) {
-        super(nome, cpf, email,senha, telefone);
+        super(nome, cpf, email, senha, telefone);
     }
 
-	public boolean isSaldoPendente() {
-		return saldoPendente;
-	}
+    public boolean isSaldoPendente() {
+        return saldoPendente;
+    }
 
-	public void setSaldoPendente(boolean saldoPendente) {
-		this.saldoPendente = saldoPendente;
-	}
+    public void setSaldoPendente(boolean saldoPendente) {
+        this.saldoPendente = saldoPendente;
+    }
 
-    public MetodoPagamento setPagamento(MetodoPagamento tipoPagamento) {
+    public void setPagamento(MetodoPagamento tipoPagamento) {
         this.tipoPagamento = tipoPagamento;
+    }
+
+    public MetodoPagamento getPagamento() {
+        return this.tipoPagamento;
     }
 }
