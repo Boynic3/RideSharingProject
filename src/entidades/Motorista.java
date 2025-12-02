@@ -3,23 +3,23 @@ package entidades;
 import servicos.Corrida;
 
 public class Motorista extends UsuarioComum {
-    private boolean cnhValida = true;
+    private String cnh;
     private String statusMotorista;
     Veiculo carro;
     Corrida viagem;
 
-    public Motorista(String nome, String cpf, String email, String senha, String telefone, String statusMotorista, boolean cnhValida) {
+    public Motorista(String nome, String cpf, String email, String senha, String telefone, String statusMotorista) {
         super(nome,cpf,email,senha,telefone);
         this.setStatusMotorista(statusMotorista);
-        this.cnhValida = cnhValida;
+        this.cnh = cnh;
     }
 
-	public boolean isCnhValida() {
-		return cnhValida;
+	public String getCnh() {
+		return cnh;
 	}
 
-	public void setCnhValida(boolean cnhValida) {
-		this.cnhValida = cnhValida;
+	public void setCnh(String cnh) {
+		this.cnh = cnh;
 	}
 
 	public String getStatusMotorista() {

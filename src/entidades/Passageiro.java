@@ -6,7 +6,6 @@ public class Passageiro extends UsuarioComum {
 
     public Passageiro(String nome, String cpf, String email, String senha, String telefone) {
         super(nome, cpf, email,senha, telefone);
-
     }
 
 	public boolean isSaldoPendente() {
@@ -17,7 +16,7 @@ public class Passageiro extends UsuarioComum {
 		this.saldoPendente = saldoPendente;
 	}
 
-    public MetodoPagamento getPagamento() {
-        return tipoPagamento;
+    public MetodoPagamento setPagamento(MetodoPagamento tipoPagamento) {
+        this.tipoPagamento = tipoPagamento;
     }
 }

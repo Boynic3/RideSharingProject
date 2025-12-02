@@ -1,9 +1,17 @@
 package ui;
+import entidades.*;
+import servicos.*;
+import exceptions.*;
+
+import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
+
 
 public class Principal {
+
     public static void main(String[] args) {
-        Scanner ler = new Scanner(System.in);
+
         int opcao = 1;
 
         System.out.println(" ==== Ride Sharing Iniciado ====");
@@ -24,7 +32,7 @@ public class Principal {
             System.out.println("14- Avaliar Passageiro");
             System.out.println("0- Sair");
 
-            System.out.print("Escolha uma opção: ");
+            System.out.print("Elerolha uma opção: ");
             try {
                 opcao = Integer.parseInt(ler.nextLine());
                 switch (opcao) {
@@ -89,21 +97,106 @@ public class Principal {
         } while (opcao != 0);
     }
 
-    private static void cadastrarMotorista() {
+    private static List<Passageiro> passageiros = new ArrayList<>();
+    private static List<Motorista> motoristas = new ArrayList<>();
+    private static List<Corrida> corridas = new ArrayList<>();
 
-        /// ///
-        System.out.println("Cadastro de motorista realizado."); // Colocar codigo aq dps
-    }
+    static Scanner ler = new Scanner(System.in);
 
     private static void cadastrarPassageiro() {
+        System.out.println("\n=== Cadastro de Passageiro ===");
+        System.out.print("Nome: ");
+        String nome = ler.nextLine();
+        System.out.print("CPF: ");
+        String cpf = ler.nextLine();
+        System.out.print("Email: ");
+        String email = ler.nextLine();
+        System.out.print("Senha: ");
+        String senha = ler.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = ler.nextLine();
 
-        /// ///
+
+        Passageiro p = new Passageiro(nome, cpf, email, telefone, senha);
+        passageiros.add(p);
+        cadastrarMetodoPagamentoPassageiro(p);
+
         System.out.println("Cadastro de passageiro realizado."); //Mudar isso dps
+    }
+
+    private static void cadastrarMetodoPagamentoPassageiro(Passageiro m) {
+        System.out.println("\n=== Cadastro de Método de Pagamento para Passageiro ===");
+
+        if (m == null) return;
+
+        System.out.println("Escolha o método de pagamento:");
+        System.out.println("1 - Cartão de Crédito");
+        System.out.println("2 - Pix");
+        System.out.println("3 - Dinheiro");
+        int escolha = Integer.parseInt(ler.nextLine());
+
+        switch (escolha) {
+            case 1:
+                System.out.println("Digite o número do cartão de crédito:");
+                String numeroCartao = ler.nextLine();
+                System.out.println("Digite a bandeira do cartão:");
+                String bandeira = ler.nextLine();
+                System.out.println("Digite a validade do cartão (MM/AA):");
+                String validade = ler.nextLine();
+                System.out.println("Digite o CVV do cartão:");
+                String cvv = ler.nextLine();
+                MetodoPagamento c = new CartaoCredito(numeroCartao, bandeira, cvv, validade);
+                m.setPagamento(c);
+                break;
+            case 2:
+                System.out.println("Digite a chave Pix:");
+                String chavePix = ler.nextLine();
+                MetodoPagamento p = new Pix(chavePix);
+                m.setPagamento(p);
+                break;
+            case 3:
+                System.out.println("Digite um valor saldo:");
+                Double s = ler.nextDouble();
+                MetodoPagamento d = new Dinheiro(s);
+                m.setPagamento(d);
+                break;
+            default:
+                if (switch (escolha !=1 || escolha !=2 || escolha !=3 )) {
+                    cadastrarMetodoPagamentoPassageiro(m);
+            };
+        }
+        System.out.println("Método de pagamento adicionado ao passageiro!");
+    }
+
+    }
+
+    private static void cadastrarMotorista() {
+        System.out.println("\n=== Cadastro de Motorista ===");
+        System.out.print("Nome: ");
+        String nome = Principal.ler.nextLine();
+        System.out.print("CPF: ");
+        String cpf = Principal.ler.nextLine();
+        System.out.print("Senha: ");
+        String senha = Principal.ler.nextLine();
+        System.out.print("Email: ");
+        String email = Principal.ler.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = Principal.ler.nextLine();
+        System.out.print("CNH: ");
+        String cnh = Principal.ler.nextLine();
+
+        Motorista m = new Motorista(nome, cpf, senha, email, telefone, cnh);
+        cadastrarVeiculo();
+
+        Principal.motoristas.add(m);
+
+
+        System.out.println("Cadastro de motorista realizado."); // Colocar codigo aq dps
     }
 
     private static void cadastrarVeiculo() {
 
-        /// ///
+
         System.out.println("Cadastro de veículo realizado.");
     }
 
