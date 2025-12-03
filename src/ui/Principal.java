@@ -488,9 +488,11 @@ public class Principal {
             pagador.setSaldoPendente(false);
             System.out.println("Dívida quitada com sucesso! Passageiro liberado para novas corridas.");
 
+
         } catch (SaldoInsuficienteException e) {
             System.out.println("FALHA NO PAGAMENTO: " + e.getMessage());
             System.out.println("O passageiro continua com a dívida e não pode solicitar novas corridas.");
+            System.out.println("Utilize a opção 14 para recarregar seu saldo");
         }
     }
 
