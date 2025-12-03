@@ -1,4 +1,4 @@
-# << Projeto de Orientação a Objetos desenvolvido em Java >>
+# Projeto de Orientação a Objetos desenvolvido em Java >>
 
 **Desenvolvido por: Matheus Moretti Soares, Arthur Miguel Silva e Luis Felipe Albuquerque Fernandes**
 
