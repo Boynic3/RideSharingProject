@@ -2,6 +2,8 @@
 
 **Desenvolvido por: Matheus Moretti Soares, Arthur Miguel Silva e Luis Felipe Albuquerque Fernandes**
 
+*https://docs.google.com/document/d/1bZdp-w4wlBjC7uXm1MhzsxVWulnb85oHjbM_BIBj420/edit?usp=sharing*
+
 # 🚗 Sistema de Ride Sharing (Simulador de Uber/99)
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
