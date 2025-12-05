@@ -13,7 +13,9 @@ public class Motorista extends UsuarioComum {
     Veiculo carro;
     Corrida viagem;
 
-    private static List<Nota> notas = new ArrayList<>();
+    private List<Nota> notas = new ArrayList<>();
+    private List<Corrida> historicoCorridas = new ArrayList<>();
+
 
     public Motorista(String nome, String cpf, String email, String senha, String telefone, String cnh, String statusMotorista) {
         super(nome, cpf, email, senha, telefone);
@@ -48,21 +50,33 @@ public class Motorista extends UsuarioComum {
         this.carro = carro;
     }
 
-    public void darNota(double nota) {
-        Nota n;
-        n = new Nota(nota);
+    public void darNota(double notaValor, String comentario) {
+        Nota n = new Nota(notaValor, comentario);
         notas.add(n);
     }
     public double calcularNota() {
-        double temp = 0.0;
-        for (int i = 0; i < notas.size(); i++) {
-            temp += notas.get(i).getNota();
-            temp = temp/notas.size();
+        if (notas.isEmpty()) return 0.0;
+        double soma = 0.0;
+        for (Nota n : notas) {
+            soma += n.getNota();
         }
-        return temp;
+        return soma / notas.size();
+    }
+
+    public List<Nota> getListaDeNotas() {
+        return notas;
     }
 
     public void setStatus(StatusMotorista statusMotorista) {
         this.status = statusMotorista;
     }
+
+    public void adicionarCorridaAoHistorico(Corrida c) {
+        this.historicoCorridas.add(c);
+    }
+
+    public List<Corrida> getHistoricoCorridas() {
+        return historicoCorridas;
+    }
+
 }

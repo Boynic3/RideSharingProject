@@ -3,6 +3,7 @@ package servicos;
 import entidades.Motorista;
 import entidades.Passageiro;
 import enums.StatusCorrida;
+import exceptions.EstadoInvalidoDaCorridaException;
 
 public class Corrida {
     private String localPartida, localFinal;
@@ -30,20 +31,59 @@ public class Corrida {
         }
     }
 
-    public void setPassageiro(Passageiro p) { this.p = p; }
-    public Passageiro getPassageiro() { return p; }
-    public void setMotorista(Motorista m) { this.motorista = m; }
-    public Motorista getMotorista() { return motorista; }
-    public void setValorCalculado(double v) { this.valorCalculado = v; }
-    public double getValorCalculado() { return valorCalculado; }
-    public void setStatus(StatusCorrida s) { this.status = s; }
-    public StatusCorrida getStatus() { return status; }
-    public String getLocalPartida() { return localPartida; }
-    public String getLocalFinal() { return localFinal; }
-    public double getKilometragem() { return kilometragem; }
+    public void setPassageiro(Passageiro p) {
+        this.p = p;
+    }
+    public Passageiro getPassageiro() {
+        return p;
+    }
+    public void setMotorista(Motorista m) {
+        this.motorista = m;
+    }
+    public Motorista getMotorista() {
+        return motorista;
+    }
+    public void setValorCalculado(double v) {
+        this.valorCalculado = v;
+    }
+    public double getValorCalculado() {
+        return valorCalculado;
+    }
+    public void setStatus(StatusCorrida s) {
+        this.status = s;
+    }
+    public StatusCorrida getStatus() {
+        return status;
+    }
+    public String getLocalPartida() {
+        return localPartida;
+    }
+    public String getLocalFinal() {
+        return localFinal;
+    }
+    public double getKilometragem() {
+        return kilometragem;
+    }
 
-    public boolean isViagemIniciada() { return this.status == StatusCorrida.EM_ANDAMENTO; }
-    public void finalizarViagem() { this.status = StatusCorrida.FINALIZADA; }
+    public boolean isViagemIniciada() {
+        return this.status == StatusCorrida.EM_ANDAMENTO; }
+
+    public void finalizarViagem() throws EstadoInvalidoDaCorridaException {
+        if (this.status != StatusCorrida.EM_ANDAMENTO) {
+            throw new EstadoInvalidoDaCorridaException("Erro: Não é possível finalizar. A corrida está " + this.status);
+        }
+        this.status = StatusCorrida.FINALIZADA;
+    }
+
+    public void cancelarViagem() throws EstadoInvalidoDaCorridaException {
+        if (this.status == StatusCorrida.FINALIZADA) {
+            throw new EstadoInvalidoDaCorridaException("Erro: Não é possível cancelar uma corrida que já foi concluída.");
+        }
+        if (this.status == StatusCorrida.CANCELADA) {
+            throw new EstadoInvalidoDaCorridaException("Erro: Esta corrida já está cancelada.");
+        }
+        this.status = StatusCorrida.CANCELADA;
+    }
 
     @Override
     public String toString() {

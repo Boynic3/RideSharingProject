@@ -31,6 +31,8 @@ public class Principal {
             System.out.println("12- Avaliar Motorista");
             System.out.println("13- Avaliar Passageiro");
             System.out.println("14- Recarregar saldo em dinheiro");
+            System.out.println("15- Ver Histórico dos Usuários");
+            System.out.println("16- Ver Histórico Geral de Corridas");
             System.out.println("0- Sair");
 
             System.out.print("Escolha uma opção: ");
@@ -82,14 +84,18 @@ public class Principal {
                     case 14:
                         recarregarSaldoPassageiro();
                         break;
+                    case 15:
+                        verHistoricoUsuario();
+                        break;
+                    case 16:
+                        verHistoricoGeralSistema();
+                        break;
                     default:
                         System.out.println("Opção INVÁLIDA. Tente novamente.");
                         break;
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Opção INVÁLIDA. Digite um número.");
-            } catch (EstadoInvalidoDaCorridaException e) {
-                throw new RuntimeException(e);
             }
 
             if (opcao != 0) {
@@ -159,7 +165,7 @@ public class Principal {
                 break;
             case 3:
                 System.out.println("Digite um valor saldo:");
-                Double s = ler.nextDouble();
+                Double s = Double.parseDouble(ler.nextLine());
                 MetodoPagamento d = new Dinheiro(s);
                 m.setPagamento(d);
                 break;
@@ -204,9 +210,9 @@ public class Principal {
         System.out.println("Digite a placa do carro: ");
         String placa = Principal.ler.nextLine();
         System.out.println("Digite o ano de fabricação do carro: ");
-        int anoFab = Principal.ler.nextInt();
+        int anoFab = Integer.parseInt(Principal.ler.nextLine());
         System.out.println("Digite o ano do modelo do carro: ");
-        int anoModelo =  Principal.ler.nextInt();
+        int anoModelo = Integer.parseInt(Principal.ler.nextLine());
         Veiculo c = new Veiculo(modelo, cor, placa, anoFab, anoModelo);
         m.setCarro(c);
 
@@ -214,11 +220,6 @@ public class Principal {
     }
 
     private static void alterarStatus() {
-        if (Principal.motoristas.isEmpty()) {
-            System.out.println("Não há motoristas cadastrados.");
-            return;
-        }
-        System.out.println("==Alterar status do motorista==");
         Motorista m = selecionarMotorista();
         if (m == null) return;
         if (m.getStatusMotorista() == StatusMotorista.EM_CORRIDA) {
@@ -227,17 +228,13 @@ public class Principal {
         }
         System.out.println("Status atual: " + m.getStatusMotorista());
         System.out.println("Defina o novo status de " + m.getNome() + ": ");
-        System.out.println("1- Online\n2- Offline");
-        int statusEscolhido = Integer.parseInt(Principal.ler.nextLine());
+        int statusEscolhido = lerOpcaoSegura("1- Online\n2- Offline", 1, 2);
         if (statusEscolhido == 1) {
             m.setStatusMotorista("ONLINE");
-        } else if (statusEscolhido == 2) {
-            m.setStatusMotorista("OFFLINE");
         } else {
-            System.out.println("Status inválido. Operação cancelada.");
-            return;
+            m.setStatusMotorista("OFFLINE");
         }
-        System.out.println("Status alterado");
+        System.out.println("Status alterado com sucesso para: " + m.getStatusMotorista());
     }
 
     private static void solicitarCorrida() {
@@ -298,7 +295,7 @@ public class Principal {
         System.out.println("Digite o local de chegada: ");
         String localFinal = Principal.ler.nextLine();
         System.out.println("Digite a distância da viagem (em Km): ");
-        Double kilometragem = Double.parseDouble(Principal.ler.nextLine());
+        double kilometragem = lerDoubleSeguro("Digite a distância da viagem (em Km): ");
 
         Corrida c = new Corrida(localPartida, localFinal, kilometragem);
         c.setPassageiro(p);
@@ -325,6 +322,9 @@ public class Principal {
 
         Principal.corridas.add(c);
 
+        p.adicionarCorridaAoHistorico(c);
+        m.adicionarCorridaAoHistorico(c);
+
         System.out.println("Corrida iniciada!");
         System.out.println("Valor calculado pela categoria: R$ " + String.format("%.2f", c.getValorCalculado()));
     }
@@ -335,11 +335,10 @@ public class Principal {
             return null;
         }
         for(int i = 0; i < Principal.passageiros.size(); i++){
-            Passageiro p = Principal.passageiros.get(i);
-            System.out.println((i + 1) + "- " + p.getNome());
+            System.out.println((i + 1) + "- " + Principal.passageiros.get(i).getNome());
         }
-        System.out.println("Escolha um passageiro: ");
-        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        int escolha = lerOpcaoSegura("Escolha um passageiro (ou 0 para cancelar): ", 0, Principal.passageiros.size());
+        if (escolha == 0) return null;
         return Principal.passageiros.get(escolha - 1);
     }
     private static Passageiro selecionarPassageiroDisponivel() {
@@ -398,17 +397,19 @@ public class Principal {
 
         int escolha = Integer.parseInt(Principal.ler.nextLine());
         Corrida c = emAndamento.get(escolha - 1);
+        try {
+            c.finalizarViagem();
 
-        c.setStatus(StatusCorrida.FINALIZADA);
+            if(c.getMotorista() != null) {
+                c.getMotorista().setStatusMotorista("ONLINE");
+            }
+            if(c.getPassageiro() != null) {
+                c.getPassageiro().setSaldoPendente(true);
+                System.out.println("Viagem finalizada! Débito gerado.");
+            }
 
-        if(c.getMotorista() != null) {
-            c.getMotorista().setStatusMotorista("ONLINE");
-        }
-
-        if(c.getPassageiro() != null) {
-            c.getPassageiro().setSaldoPendente(true);
-            System.out.println("Viagem finalizada! O passageiro " + c.getPassageiro().getNome() + " agora possui um débito pendente.");
-            System.out.println("Vá para a opção 8 (Processar Pagamento) para quitar a dívida.");
+        } catch (EstadoInvalidoDaCorridaException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -417,12 +418,18 @@ public class Principal {
             System.out.println("Não há motoristas cadastrados.");
             return null;
         }
+
+        System.out.println("--- Seleção de Motorista ---");
         for (int i = 0; i < Principal.motoristas.size(); i++) {
             Motorista m = Principal.motoristas.get(i);
-            System.out.println((i + 1) + "- " + m.getNome() + "(" + m.getStatusMotorista() + ")");
+            System.out.println((i + 1) + "- " + m.getNome() + " (" + m.getStatusMotorista() + ")");
         }
-        System.out.println("Escolha um motorista: ");
-        int escolha = Integer.parseInt(Principal.ler.nextLine());
+        int escolha = lerOpcaoSegura("Escolha um motorista (ou 0 para cancelar): ", 0, Principal.motoristas.size());
+
+        if (escolha == 0) {
+            System.out.println("Operação cancelada.");
+            return null;
+        }
         return Principal.motoristas.get(escolha - 1);
     }
 
@@ -435,10 +442,20 @@ public class Principal {
         return Principal.corridas.get(escolha - 1);
     }
 
-    private static void cancelarViagem() throws EstadoInvalidoDaCorridaException {        //Mesma coisa com esse aqui, ajeitar como expliquei
+    private static void cancelarViagem() {
+        System.out.println("== Cancelar Viagem ==");
         Corrida c = selecionarViagem();
-        if(c.isViagemIniciada()){
-            c.finalizarViagem();
+        if (c == null) return;
+
+        try {
+            c.cancelarViagem();
+            if (c.getMotorista() != null) {
+                c.getMotorista().setStatusMotorista("ONLINE");
+            }
+            System.out.println("Viagem cancelada com sucesso.");
+
+        } catch (EstadoInvalidoDaCorridaException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -497,25 +514,31 @@ public class Principal {
     }
 
     private static void verCorridas() {
-        System.out.println("Corridas: ");
+        System.out.println("=== Corridas em Andamento ===");
+        boolean encontrouAlguma = false;
+
         if (Principal.corridas.isEmpty()) {
-            System.out.println("Nenhuma corrida registrada.");
+            System.out.println("Nenhuma corrida registrada no sistema.");
             return;
         }
 
         for (Corrida c : Principal.corridas) {
-            System.out.println("-------------------------");
+            if (c.getStatus() == StatusCorrida.EM_ANDAMENTO || c.getStatus() == StatusCorrida.SOLICITADA) {
 
-            String nomePassageiro = (c.getPassageiro() != null) ? c.getPassageiro().getNome() : "Desconhecido";
-            String nomeMotorista = (c.getMotorista() != null) ? c.getMotorista().getNome() : "Desconhecido";
+                encontrouAlguma = true;
+                System.out.println("-------------------------");
+                String nomePassageiro = (c.getPassageiro() != null) ? c.getPassageiro().getNome() : "Desconhecido";
+                String nomeMotorista = (c.getMotorista() != null) ? c.getMotorista().getNome() : "Aguardando...";
 
-            System.out.println("Corrida de " + nomePassageiro);
-
-            System.out.println("Motorista: " + nomeMotorista);
-            System.out.println("Status: " + c.getStatus());
-            System.out.println("De: " + c.getLocalPartida() + " -> Para: " + c.getLocalFinal());
-            System.out.println("Distância: " + c.getKilometragem() + " km");
-            System.out.println("-------------------------");
+                System.out.println("Corrida de " + nomePassageiro);
+                System.out.println("Motorista: " + nomeMotorista);
+                System.out.println("Status: " + c.getStatus());
+                System.out.println("De: " + c.getLocalPartida() + " -> Para: " + c.getLocalFinal());
+                System.out.println("-------------------------");
+            }
+        }
+        if (!encontrouAlguma) {
+            System.out.println("Não há nenhuma corrida em andamento no momento.");
         }
     }
 
@@ -566,18 +589,28 @@ public class Principal {
             System.out.println("Não há motoristas cadastrados.");
             return;
         }
-        System.out.println("==Avaliar motoristas==");
-        System.out.println("Qual motorista você quer avaliar: ");
-
+        System.out.println("== Avaliar Motorista ==");
         Motorista m = selecionarMotorista();
+        if (m == null) return;
+        double valorNota = -1;
 
-        System.out.println("Qual Nota você quer dar a esse Motorista?: ");
-        double avaliacao = Integer.parseInt(Principal.ler.nextLine());
+        while (valorNota < 0 || valorNota > 5) {
+            System.out.println("Qual nota você quer dar (0 a 5)?");
+            try {
+                valorNota = Double.parseDouble(ler.nextLine());
+                if (valorNota < 0 || valorNota > 5) {
+                    System.out.println("Erro: A nota deve ser entre 0 e 5.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido (ex: 4.5).");
+            }
+        }
 
-        m.darNota(avaliacao);
-
-        System.out.println("Nota Adicionada com successo!");
-        System.out.println("A nota atual desse Passageiro é: " + m.calcularNota());
+        System.out.println("Deseja deixar um comentário? (Digite o comentário ou aperte ENTER para pular):");
+        String comentario = ler.nextLine();
+        m.darNota(valorNota, comentario);
+        System.out.println("Avaliação registrada com sucesso!");
+        System.out.println("Nova média do motorista: " + String.format("%.2f", m.calcularNota()));
     }
 
     private static void avaliarPassageiro() {
@@ -585,19 +618,27 @@ public class Principal {
             System.out.println("Não há passageiros cadastrados.");
             return;
         }
-        System.out.println("==Avaliar passageiros==");
-        System.out.println("Qual passageiro você quer avaliar: ");
-
+        System.out.println("== Avaliar Passageiro ==");
         Passageiro p = selecionarPassageiro();
+        if (p == null) return;
+        double avaliacao = -1;
 
-        System.out.println("Qual Nota você quer dar a esse passageiro?: ");
-
-        int avaliacao = Integer.parseInt(Principal.ler.nextLine());
-
-        p.darNota(avaliacao);
-
-        System.out.println("Nota Adicionada com successo!");
-        System.out.println("A nota atual desse Passageiro é: " + p.calcularNota());
+        while (avaliacao < 0 || avaliacao > 5) {
+            System.out.println("Qual nota você quer dar a esse passageiro? (0 a 5): ");
+            try {
+                avaliacao = Double.parseDouble(Principal.ler.nextLine());
+                if (avaliacao < 0 || avaliacao > 5) {
+                    System.out.println("Erro: A nota deve ser entre 0 e 5.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido.");
+            }
+        }
+        System.out.println("Deseja deixar um comentário? (Digite o texto ou aperte ENTER para pular):");
+        String comentario = Principal.ler.nextLine();
+        p.darNota(avaliacao, comentario);
+        System.out.println("Nota adicionada com sucesso!");
+        System.out.println("A nota atual desse Passageiro é: " + String.format("%.2f", p.calcularNota()));
     }
 
     private static void recarregarSaldoPassageiro() {
@@ -628,6 +669,79 @@ public class Principal {
         }
     }
 
+    private static void verHistoricoUsuario() {
+        System.out.println("=== Ver Histórico de Usuários ===");
+        System.out.println("1 - Histórico de Passageiro");
+        System.out.println("2 - Histórico de Motorista");
+        int tipo = Integer.parseInt(ler.nextLine());
+
+        if (tipo == 1) {
+            Passageiro p = selecionarPassageiro();
+            if (p == null) return;
+
+            System.out.println("Histórico de corridas de " + p.getNome() + ":");
+            List<Corrida> historico = p.getHistoricoCorridas();
+
+            if (historico.isEmpty()) {
+                System.out.println("Nenhuma corrida realizada.");
+            } else {
+                for (Corrida c : historico) {
+                    System.out.println(c.toString() + " - Status: " + c.getStatus());
+                }
+            }
+
+        } else if (tipo == 2) {
+            Motorista m = selecionarMotorista();
+            if (m == null) return;
+
+            System.out.println("Histórico de corridas de " + m.getNome() + ":");
+            List<Corrida> historico = m.getHistoricoCorridas();
+            if (historico.isEmpty()) {
+                System.out.println("Nenhuma corrida realizada.");
+            } else {
+                for (Corrida c : historico) {
+                    System.out.println(c.toString() + " - Status: " + c.getStatus());
+                }
+            }
+        } else {
+            System.out.println("Opção inválida.");
+        }
+    }
+
+    private static void verHistoricoGeralSistema() {
+        System.out.println("=== Histórico Geral do Sistema (Finalizadas e Canceladas) ===");
+
+        if (Principal.corridas.isEmpty()) {
+            System.out.println("Nenhuma corrida registrada no sistema.");
+            return;
+        }
+
+        boolean encontrouAlgum = false;
+
+        for (Corrida c : Principal.corridas) {
+            if (c.getStatus() == StatusCorrida.FINALIZADA || c.getStatus() == StatusCorrida.CANCELADA) {
+                encontrouAlgum = true;
+
+                System.out.println("-------------------------");
+                System.out.println("Data/ID: Corrida #" + (Principal.corridas.indexOf(c) + 1));
+                System.out.println("Status: " + c.getStatus());
+
+                String pNome = (c.getPassageiro() != null) ? c.getPassageiro().getNome() : "[Removido]";
+                String mNome = (c.getMotorista() != null) ? c.getMotorista().getNome() : "[Sem motorista]";
+
+                System.out.println("Passageiro: " + pNome);
+                System.out.println("Motorista: " + mNome);
+                System.out.println("Trajeto: " + c.getLocalPartida() + " -> " + c.getLocalFinal());
+                if (c.getStatus() == StatusCorrida.FINALIZADA) {
+                    System.out.println("Valor Final: R$ " + String.format("%.2f", c.getValorCalculado()));
+                }
+                System.out.println("-------------------------");
+            }
+        }
+        if (!encontrouAlgum) {
+            System.out.println("O histórico está vazio (apenas corridas em andamento ou solicitadas no momento).");
+        }
+    }
 
     private static void testeInicializarDados() {
         // n esquecam de adicionar o passageiro/motorista nas listas
@@ -649,4 +763,44 @@ public class Principal {
         Veiculo v2 = new Veiculo("Honda Civic", "Preto", "XYZ-5678", 2020, 2020);
         m2.setCarro(v2);
     }
+
+    // pra evitar os crashes de antes
+    private static int lerOpcaoSegura(String mensagem, int min, int max) {
+        int opcao = -1;
+        while (true) {
+            System.out.println(mensagem);
+            try {
+                String entrada = ler.nextLine();
+                opcao = Integer.parseInt(entrada);
+
+                if (opcao >= min && opcao <= max) {
+                    return opcao;
+                } else {
+                    System.out.println("Erro: Digite um número entre " + min + " e " + max + ".");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Entrada inválida. Por favor, digite apenas números.");
+            }
+        }
+    }
+
+    private static double lerDoubleSeguro(String mensagem) {
+        while (true) {
+            System.out.println(mensagem);
+            try {
+                String entrada = ler.nextLine();
+                // Tenta converter. Se for texto inválido, vai para o catch.
+                double valor = Double.parseDouble(entrada);
+
+                if (valor < 0) {
+                    System.out.println("Erro: O valor não pode ser negativo.");
+                } else {
+                    return valor;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite uma distância válida (use ponto para decimais, ex: 12.5).");
+            }
+        }
+    }
+
 }

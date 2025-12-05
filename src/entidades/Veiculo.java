@@ -1,7 +1,7 @@
 package entidades;
 
 public class Veiculo {
-    String modelo, cor, placa;
+    private String modelo, cor, placa;
     int anoFabrica, anoModelo;
     public Veiculo(String modelo, String cor, String placa, int anoFabrica, int anoModelo) {
         this.modelo = modelo;
