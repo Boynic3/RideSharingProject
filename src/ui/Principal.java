@@ -293,14 +293,14 @@ public class Principal {
         System.out.println("Digite o local de chegada: ");
         String localFinal = Principal.ler.nextLine();
         System.out.println("Digite a distância da viagem (em Km): ");
-        double kilometragem = lerDoubleSeguro();
+        double quilometragem = lerDoubleSeguro();
 
-        Corrida c = new Corrida(localPartida, localFinal, kilometragem);
+        Corrida c = new Corrida(localPartida, localFinal, quilometragem);
         c.setPassageiro(p);
         c.setMotorista(m);
         c.setStatus(StatusCorrida.EM_ANDAMENTO);
         m.setStatus(StatusMotorista.EM_CORRIDA);
-        System.out.println("A sua corrida parte de " + localPartida + " até " + localFinal + " e tem " + kilometragem + "kms de distância");
+        System.out.println("A sua corrida parte de " + localPartida + " até " + localFinal + " e tem " + quilometragem + "kms de distância");
 
         System.out.println("Categoria:");
         System.out.println("1. Comum");
@@ -574,8 +574,8 @@ public class Principal {
                 System.out.println("Email " + p.getEmail());
                 System.out.println("Telefone: " + p.getTelefone());
                 System.out.println("Saldo pendente? " + respostaSaldo);
-                System.out.println("Metodo de pagamento: " + p.getPagamento());
-                System.out.println(("Avaliacao: " + p.calcularNota()));
+                System.out.println("Método de pagamento: " + p.getPagamento());
+                System.out.println(("Avaliação: " + p.calcularNota()));
                 System.out.println("-------------------------");
             }
 

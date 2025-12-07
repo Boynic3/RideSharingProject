@@ -9,8 +9,8 @@ public abstract class CategoriaCorrida {
         this.multiplicador = multiplicador;
     }
 
-    public double calcularPreco(double kilometragem) {
-        return tarifaBase + (multiplicador * kilometragem);
+    public double calcularPreco(double quilometragem) {
+        return tarifaBase + (multiplicador * quilometragem);
     }
 
     public double getMultiplicador() {

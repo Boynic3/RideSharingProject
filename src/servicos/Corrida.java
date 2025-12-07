@@ -7,17 +7,17 @@ import exceptions.EstadoInvalidoDaCorridaException;
 
 public class Corrida {
     private String localPartida, localFinal;
-    private double kilometragem;
+    private double quilometragem;
     private StatusCorrida status;
     private Passageiro p;
     private Motorista motorista;
     private double valorCalculado;
     private CategoriaCorrida categoria;
 
-    public Corrida(String localPartida, String localFinal, double kilometragem) {
+    public Corrida(String localPartida, String localFinal, double quilometragem) {
         this.localPartida = localPartida;
         this.localFinal = localFinal;
-        this.kilometragem = kilometragem;
+        this.quilometragem = quilometragem;
         this.status = StatusCorrida.SOLICITADA;
     }
 
@@ -27,7 +27,7 @@ public class Corrida {
 
     public void calcularValorFinal() {
         if (this.categoria != null) {
-            this.valorCalculado = this.categoria.calcularPreco(this.kilometragem);
+            this.valorCalculado = this.categoria.calcularPreco(this.quilometragem);
         }
     }
 
@@ -61,8 +61,8 @@ public class Corrida {
     public String getLocalFinal() {
         return localFinal;
     }
-    public double getKilometragem() {
-        return kilometragem;
+    public double getquilometragem() {
+        return quilometragem;
     }
 
     public boolean isViagemIniciada() {
