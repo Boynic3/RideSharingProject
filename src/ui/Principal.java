@@ -165,14 +165,12 @@ public class Principal {
                 break;
             case 3:
                 System.out.println("Digite um valor saldo:");
-                Double s = Double.parseDouble(ler.nextLine());
+                double s = Double.parseDouble(ler.nextLine());
                 MetodoPagamento d = new Dinheiro(s);
                 m.setPagamento(d);
                 break;
             default:
-                if (escolha !=1 || escolha !=2 || escolha !=3 ) {
-                    cadastrarMetodoPagamentoPassageiro(m);
-                }
+                cadastrarMetodoPagamentoPassageiro(m);
         }
         System.out.println("Método de pagamento adicionado ao passageiro!\n");
 
@@ -295,7 +293,7 @@ public class Principal {
         System.out.println("Digite o local de chegada: ");
         String localFinal = Principal.ler.nextLine();
         System.out.println("Digite a distância da viagem (em Km): ");
-        double kilometragem = lerDoubleSeguro("Digite a distância da viagem (em Km): ");
+        double kilometragem = lerDoubleSeguro();
 
         Corrida c = new Corrida(localPartida, localFinal, kilometragem);
         c.setPassageiro(p);
@@ -565,7 +563,7 @@ public class Principal {
             System.out.println("Passageiros: ");
             for (Passageiro p : Principal.passageiros) {
                 String respostaSaldo =  "";
-                if (p.isSaldoPendente() == false){
+                if (!p.isSaldoPendente()){
                     respostaSaldo = "Não. Tudo pago";
                 } else {
                     respostaSaldo = "Sim. Pagamento pendente";
@@ -784,9 +782,9 @@ public class Principal {
         }
     }
 
-    private static double lerDoubleSeguro(String mensagem) {
+    private static double lerDoubleSeguro() {
         while (true) {
-            System.out.println(mensagem);
+            System.out.println("Digite a distância da viagem (em Km): ");
             try {
                 String entrada = ler.nextLine();
                 // Tenta converter. Se for texto inválido, vai para o catch.
