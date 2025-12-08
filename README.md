@@ -1,6 +1,6 @@
 # Projeto de Orientação a Objetos desenvolvido em Java >>
 
-**Desenvolvido por: Matheus Moretti Soares, Arthur Miguel Silva e Luis Felipe Albuquerque Fernandes**
+**Desenvolvido por: Matheus Moretti Soares, Arthur Miguel Silva Rocha e Luis Felipe Albuquerque Fernandes**
 
 *https://docs.google.com/document/d/1bZdp-w4wlBjC7uXm1MhzsxVWulnb85oHjbM_BIBj420/edit?usp=sharing*
 
